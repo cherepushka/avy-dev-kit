@@ -36,6 +36,9 @@ RUN pecl install imagick \
 # Enable XDebug
 ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+# Add custom php.ini config
+ADD php.ini /usr/local/etc/php/php.ini
+
 EXPOSE 9000
 
 # Tesseract install
