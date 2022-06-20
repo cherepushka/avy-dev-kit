@@ -6,7 +6,8 @@ RUN apk add --update --no-cache \
     libxrender fontconfig libc6-compat \
     mysql-client gnupg binutils-gold autoconf \
     g++ gcc gnupg libgcc linux-headers make python3 \
-    automake libtool tesseract-ocr-dev pkgconfig
+    automake libtool tesseract-ocr-dev pkgconfig \
+    nodejs npm
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
