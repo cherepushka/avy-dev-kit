@@ -41,16 +41,3 @@ ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 ADD php.ini /usr/local/etc/php/php.ini
 
 EXPOSE 9000
-
-# Tesseract install
-RUN git clone --depth 1  https://github.com/tesseract-ocr/tesseract.git
-RUN cd tesseract \
-    ./autogen.sh \
-    ./configure \
-    ./make \
-    make install \
-    ldconfig
-
-ENV TESSDATA_PREFIX=/usr/share/tessdata
-# installing russian language
-RUN wget -O $TESSDATA_PREFIX/rus.traineddata https://github.com/tesseract-ocr/tessdata/raw/main/rus.traineddata
