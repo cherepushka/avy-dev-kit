@@ -3,74 +3,17 @@ version: '3.8'
 services:
 
   apache:
+    container_name: avy-apache-httpd
     build:
       context: ./apache
     volumes:
     - ./apache/configs/httpd.conf:/usr/local/apache2/conf/httpd.conf
     - ./apache/configs/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
-    - ./htdocs:/usr/local/apache2/htdocs
     - ./apache/logs:/usr/local/apache2/logs
+    - ./web-sites/avy/htdocs:/usr/local/apache2/htdocs/avy
+    - ./web-sites/avy-search/htdocs:/usr/local/apache2/htdocs/search-avy
     ports:
     - "80:80"
-    networks:
-      - 'LAMP'
-
-  php8.1:
-    build:
-      context: ./php/8.1
-    volumes:
-      - ./htdocs:/var/www/html
-    networks:
-      - 'LAMP'
-      
-  elasticsearch:
-    image: elasticsearch:8.2.2
-    init: true
-    environment:
-      - node.name=catalog_es1
-      - cluster.name=es-docker-cluster
-      - bootstrap.memory_lock=true
-      - "discovery.type=single-node"
-      - "xpack.security.enabled=false"
-      - "ELASTIC_PASSWORD=123123"
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    volumes:
-      - ./elasticsearch/log/:/usr/share/elasticsearch/logs
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - '127.0.0.1:9200:9200'
-    networks:
-      - 'LAMP'
-
-  kibana:
-    image: kibana:8.2.2
-    depends_on:
-      - elasticsearch
-    environment:
-      - ELASTICSEARCH_URL="http://localhost:9200"
-      - server.host=127.0.0.1
-    networks:
-      - 'LAMP'
-    ports:
-      - "5601:5601"
-
-  mariadb:
-    build:
-      context: ./mariadb
-    environment:
-      MARIADB_DATABASE: 'avy'
-      MARIADB_USER: 'admin'
-      MARIADB_PASSWORD: '123123'
-      MARIADB_ROOT_PASSWORD: '123123'
-      MARIADB_ROOT_HOST: '%'
-    ports:
-      - '3308:3306'
-    volumes:
-      - './mariadb/data:/var/lib/mysql'
-      - './mariadb/logs:/var/log/mysql'
     networks:
       - 'LAMP'
 

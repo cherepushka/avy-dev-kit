@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+
+  php8.1:
+    container_name: avy-search-php
+    build:
+      context: ./php/prod
+    volumes:
+      - ./sites:/var/www/html
+    networks:
+      - 'LAMP'
+
+  elasticsearch:
+    container_name: avy-search-elasticsearch
+    image: elasticsearch:8.2.2
+    init: true
+    environment:
+      - node.name=catalog_es1
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+      - "ELASTIC_PASSWORD=123123"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./elasticsearch/log/:/usr/share/elasticsearch/logs
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - '9200:9200'
+    networks:
+      - 'LAMP'
+
+  kibana:
+    container_name: avy-search-kibana
+    image: kibana:8.2.2
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_URL="http://localhost:9200"
+      - server.host=127.0.0.1
+    networks:
+      - 'LAMP'
+    ports:
+      - "5601:5601"
+
+  mariadb:
+    container_name: avy-search-mariadb
+    build:
+      context: ./mariadb
+    environment:
+      MARIADB_DATABASE: 'avy'
+      MARIADB_USER: 'admin'
+      MARIADB_PASSWORD: '123123'
+      MARIADB_ROOT_PASSWORD: '123123'
+      MARIADB_ROOT_HOST: '%'
+    ports:
+      - '3308:3306'
+    volumes:
+      - './mariadb/data:/var/lib/mysql'
+      - './mariadb/logs:/var/log/mysql'
+    networks:
+      - 'LAMP'
+
+networks:
+  LAMP:
+    name: LAMP
