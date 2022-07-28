@@ -55,11 +55,11 @@ services:
     build:
       context: ./mariadb
     environment:
-      MARIADB_DATABASE: 'avy'
-      MARIADB_USER: 'admin'
-      MARIADB_PASSWORD: '123123'
-      MARIADB_ROOT_PASSWORD: '123123'
-      MARIADB_ROOT_HOST: '%'
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_USER_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_ROOT_HOST: ${MARIADB_ROOT_HOST}
     ports:
       - '3308:3306'
     volumes:
