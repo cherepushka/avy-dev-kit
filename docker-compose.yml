@@ -2,6 +2,15 @@ version: '3.8'
 
 services:
 
+  certbot:
+    image: certbot/certbot
+    depends_on:
+      - apache
+    volumes:
+      - ./certbot/letsencrypt:/etc/letsencrypt
+      - ./web-sites/avy/htdocs:/var/www/avy.ru
+      - ./web-sites/search.avy/htdocs:/var/www/search.avy.ru
+
   apache:
     container_name: avy-apache-httpd
     build:
@@ -10,8 +19,9 @@ services:
     - ./apache/configs/httpd.conf:/usr/local/apache2/conf/httpd.conf
     - ./apache/configs/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
     - ./apache/logs:/usr/local/apache2/logs
+#    - ./certbot/letsencrypt:/etc/letsencrypt
     - ./web-sites/avy/htdocs:/usr/local/apache2/htdocs/avy
-    - ./web-sites/avy-search/htdocs:/usr/local/apache2/htdocs/search-avy
+    - ./web-sites/search.avy/htdocs:/usr/local/apache2/htdocs/search.avy
     ports:
     - "80:80"
     networks:

@@ -1,2 +1,2 @@
-./htdocs/
+htdocs/**
 docker-compose.yml

@@ -3,16 +3,16 @@ version: '3.8'
 services:
 
   php8.1:
-    container_name: avy-search-php
+    container_name: avy-php
     build:
       context: ./php/prod
     volumes:
-      - ./sites:/var/www/html
+      - ./htdocs:/var/www/html
     networks:
       - 'LAMP'
 
   mysql:
-    container_name: avy-search-mariadb
+    container_name: avy-mariadb
     build:
       context: ./mysql
     environment:

@@ -6,8 +6,7 @@ RUN apk add --update --no-cache \
     libxrender fontconfig libc6-compat \
     mysql-client gnupg binutils-gold autoconf \
     g++ gcc gnupg libgcc linux-headers make python3 \
-    automake libtool tesseract-ocr-dev pkgconfig \
-    nodejs npm
+    automake libtool pkgconfig nodejs npm
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
@@ -28,11 +27,6 @@ RUN apk add --update --no-cache zlib-dev libzip-dev \
 # Install xdebug
 RUN pecl install xdebug \
  && docker-php-ext-enable xdebug
-
-# Install Imagick
-RUN apk add --no-cache imagemagick imagemagick-dev
-RUN pecl install imagick \
- && docker-php-ext-enable imagick
 
 # Enable XDebug
 ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
