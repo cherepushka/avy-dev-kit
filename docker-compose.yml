@@ -4,29 +4,31 @@ services:
 
   certbot:
     image: certbot/certbot
+    user: ${UID:-1000}:${GID:-1000}
     depends_on:
       - apache
     volumes:
-      - ./certbot/letsencrypt:/etc/letsencrypt
-      - ./web-sites/avy/htdocs:/var/www/avy.ru
-      - ./web-sites/search.avy/htdocs:/var/www/search.avy.ru
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/logs:/var/log/letsencrypt
 
   apache:
     container_name: avy-apache-httpd
+    user: ${UID:-1000}:${GID:-1000}
     build:
       context: ./apache
-      args:
-        - UID=${UID:-$(id -u)}
-        - GID=${GID:-$(id -g)}
     volumes:
-    - ./apache/configs/httpd.conf:/usr/local/apache2/conf/httpd.conf
-    - ./apache/configs/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
-    - ./apache/logs:/usr/local/apache2/logs
-#    - ./certbot/letsencrypt:/etc/letsencrypt
-    - ./web-sites/avy/htdocs:/usr/local/apache2/htdocs/avy
-    - ./web-sites/search.avy/htdocs:/usr/local/apache2/htdocs/search.avy
+      - ./apache/configs/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./apache/configs/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+      - ./apache/configs/extra/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf
+      - ./apache/logs:/usr/local/apache2/logs
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./web-sites/avy/htdocs:/usr/local/apache2/htdocs/avy
+      - ./web-sites/search.avy/htdocs:/usr/local/apache2/htdocs/search.avy
     ports:
-    - "80:80"
+      - "80:80"
+      - "443:443"
     networks:
       - 'LAMP'
 

@@ -6,6 +6,9 @@ services:
     container_name: avy-search-php
     build:
       context: ./php/prod
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
     volumes:
       - ./htdocs:/var/www/html
     networks:
@@ -54,6 +57,7 @@ services:
     container_name: avy-search-mariadb
     build:
       context: ./mariadb
+    user: ${UID}:${GID}
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USER: ${MARIADB_USER}

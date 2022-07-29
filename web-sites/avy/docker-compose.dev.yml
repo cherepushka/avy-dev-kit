@@ -7,24 +7,24 @@ services:
     build:
       context: ./php/dev
       args:
-        - UID=${UID:-$(id -u)}
-        - GID=${GID:-$(id -g)}
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
     volumes:
       - ./htdocs:/var/www/html
     networks:
       - 'LAMP'
 
   mysql:
-    container_name: avy-mariadb
+    container_name: avy-mysql
     build:
       context: ./mysql
-    user: "${UID:-$(id -u):${GID:-$(id -g)}"
+    user: ${UID}:${GID}
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      MYSQL_ROOT_HOST: '%'
     ports:
       - '3308:3306'
     volumes:

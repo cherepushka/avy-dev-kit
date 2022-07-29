@@ -1,5 +1,11 @@
 FROM php:8.1.5-fpm-alpine
 
+ARG UID
+ARG GID
+
+ENV UID=${UID}
+ENV GID=${GID}
+
 # Install tools required for build stage
 RUN apk add --update --no-cache \
     bash curl wget rsync ca-certificates openssl openssh git tzdata openntpd \
@@ -34,10 +40,16 @@ RUN apk add --no-cache imagemagick imagemagick-dev
 RUN pecl install imagick \
  && docker-php-ext-enable imagick
 
+RUN addgroup -g ${GID} --system search-avy-group
+RUN adduser -G search-avy-group --system -D -s /bin/sh -u ${UID} search-avy
+
 # Enable XDebug
 ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # Add custom php.ini config
 ADD php.ini /usr/local/etc/php/php.ini
+
+RUN sed -i "s/user = www-data/user = search-avy/g" /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i "s/group = www-data/group = search-avy-group/g" /usr/local/etc/php-fpm.d/www.conf
 
 EXPOSE 9000

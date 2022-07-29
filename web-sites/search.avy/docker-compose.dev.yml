@@ -6,6 +6,9 @@ services:
     container_name: avy-search-php
     build:
       context: ./php/dev
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
     volumes:
       - ./htdocs:/var/www/html
     networks:
@@ -24,7 +27,7 @@ services:
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
-#      - ./elasticsearch/data/:/usr/share/elasticsearch/data
+      #      - ./elasticsearch/data/:/usr/share/elasticsearch/data
       - ./elasticsearch/log/:/usr/share/elasticsearch/logs
     ulimits:
       memlock:
@@ -54,6 +57,7 @@ services:
     container_name: avy-search-mariadb
     build:
       context: ./mariadb
+    user: ${UID}:${GID}
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USER: ${MARIADB_USER}

@@ -41,7 +41,7 @@ ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 RUN docker-php-ext-install mysqli
 
 RUN addgroup -g ${GID} --system avy-group
-RUN adduser -G search-avy-group --system -D -s /bin/sh -u ${UID} avy
+RUN adduser -G avy-group --system -D -s /bin/sh -u ${UID} avy
 
 # Add custom php.ini config
 ADD php.ini /usr/local/etc/php/php.ini
