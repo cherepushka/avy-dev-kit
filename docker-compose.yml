@@ -15,6 +15,9 @@ services:
     container_name: avy-apache-httpd
     build:
       context: ./apache
+      args:
+        - UID=${UID:-$(id -u)}
+        - GID=${GID:-$(id -g)}
     volumes:
     - ./apache/configs/httpd.conf:/usr/local/apache2/conf/httpd.conf
     - ./apache/configs/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf

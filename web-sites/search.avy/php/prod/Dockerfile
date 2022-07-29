@@ -1,5 +1,11 @@
 FROM php:8.1.5-fpm-alpine
 
+ARG UID
+ARG GID
+
+ENV UID=${UID}
+ENV GID=${GID}
+
 # Install tools required for build stage
 RUN apk add --update --no-cache \
     bash curl wget rsync ca-certificates openssl openssh git tzdata openntpd \
@@ -29,6 +35,9 @@ RUN apk add --update --no-cache zlib-dev libzip-dev \
 RUN apk add --no-cache imagemagick imagemagick-dev
 RUN pecl install imagick \
  && docker-php-ext-enable imagick
+
+RUN addgroup -g ${GID} --system search-avy-group
+RUN adduser -G search-avy-group --system -D -s /bin/sh -u ${UID} search-avy
 
 # Add custom php.ini config
 ADD php.ini /usr/local/etc/php/php.ini

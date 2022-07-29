@@ -6,6 +6,9 @@ services:
     container_name: avy-php
     build:
       context: ./php/dev
+      args:
+        - UID=${UID:-$(id -u)}
+        - GID=${GID:-$(id -g)}
     volumes:
       - ./htdocs:/var/www/html
     networks:
@@ -15,6 +18,7 @@ services:
     container_name: avy-mariadb
     build:
       context: ./mysql
+    user: "${UID:-$(id -u):${GID:-$(id -g)}"
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}

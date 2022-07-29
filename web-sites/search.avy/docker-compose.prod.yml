@@ -24,7 +24,7 @@ services:
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
-#      - ./elasticsearch/data/:/usr/share/elasticsearch/data'
+#      - ./elasticsearch/data/:/usr/share/elasticsearch/data
       - ./elasticsearch/log/:/usr/share/elasticsearch/logs
     ulimits:
       memlock:
