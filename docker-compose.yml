@@ -18,9 +18,9 @@ services:
     build:
       context: ./apache
     volumes:
-      - ./apache/configs/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - ./apache/configs/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
-      - ./apache/configs/extra/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf
+      - ./apache/configs/${ENV}/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./apache/configs/${ENV}/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+      - ./apache/configs/${ENV}/extra/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf
       - ./apache/logs:/usr/local/apache2/logs
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot

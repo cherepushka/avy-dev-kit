@@ -5,7 +5,8 @@ services:
   php8.1:
     container_name: avy-php
     build:
-      context: ./php/prod
+      context: ./php
+      dockerfile: ${ENV}.Dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
@@ -18,7 +19,7 @@ services:
     container_name: avy-mysql
     build:
       context: ./mysql
-    user: ${UID}:${GID}
+    user: ${UID:-1000}:${GID:-1000}
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
