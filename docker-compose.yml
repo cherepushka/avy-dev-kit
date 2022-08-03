@@ -4,7 +4,6 @@ services:
 
   certbot:
     image: certbot/certbot
-    user: ${UID:-1000}:${GID:-1000}
     depends_on:
       - apache
     volumes:

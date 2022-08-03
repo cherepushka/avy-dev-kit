@@ -17,8 +17,14 @@ services:
 
   elasticsearch:
     container_name: avy-search-elasticsearch
-    image: elasticsearch:${ELASTICSEARCH_VERSION}
+    image: elasticsearch:${ELASTIC_VERSION}
     init: true
+#    command: >
+#      bash -c '
+#        echo "Setting ${KIBANA_USERNAME} password";
+#        until curl -X POST -u elastic:${ELASTICSEARCH_PASSWORD} -H "Content-Type: application/json" http://localhost:9200/_security/user/${KIBANA_USERNAME}/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}"; do sleep 10; done;
+#        echo "All done!"
+#      '
     environment:
       - node.name=catalog_es1
       - cluster.name=es-docker-cluster
@@ -27,6 +33,7 @@ services:
       - xpack.security.enabled=true
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - action.destructive_requires_name=false
     volumes:
 #      - ./elasticsearch/data/:/usr/share/elasticsearch/data
       - ./elasticsearch/log/:/usr/share/elasticsearch/logs
@@ -39,26 +46,24 @@ services:
     networks:
       - 'LAMP'
 
-  kibana:
-    container_name: avy-search-kibana
-    image: kibana:${ELASTICSEARCH_VERSION}
-    depends_on:
-      - elasticsearch
-    environment:
-      - ELASTICSEARCH_URL=http://localhost:9200
-      - server.host=127.0.0.1
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
-    networks:
-      - 'LAMP'
-    ports:
-      - "5601:5601"
+  # kibana:
+  #   container_name: avy-search-kibana
+  #   image: kibana:${ELASTIC_VERSION}
+  #   depends_on:
+  #     - elasticsearch
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #     - ELASTICSEARCH_USERNAME=${KIBANA_USERNAME}
+  #     - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+  #   networks:
+  #     - 'LAMP'
+  #   ports:
+  #     - "5601:5601"
 
   mariadb:
     container_name: avy-search-mariadb
     build:
       context: ./mariadb
-    user: ${UID}:${GID}
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USER: ${MARIADB_USER}
