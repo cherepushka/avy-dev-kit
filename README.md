@@ -1,10 +1,8 @@
 # avy - development kit
 
 ## TODO:
-1. Прописать в инструкциях `mkdir` для монтируемых папок,  
-чтобы их владельцем не был root
-2. Автоматическое продления ssl сертификатов
-3. Прописать всю документацию
+1. Автоматическое продления ssl сертификатов
+2. Настроить apache логи
 
 ## Что это за репозиторий?
 В этом репозитории находится серверное окружение для сайта `avy`  
@@ -26,13 +24,17 @@
 ## Содержание
 
 1. [Схема](#scheme)
-2. [Общая установка](#general-installation)
-3. [avy.ru][] 
-   + [development сборка][]
-   + [production сборка][]
-4. [search.avy.ru]
-   + [development сборка][]
-   + [production сборка][]
+2. [Необходимые программы](#preinstall)
+3. [Установка корневого Apache](#apache-installation)
+4. [avy.ru](docs/avy.ru.md)
+   + [Общие шаги](docs/avy.ru.md#general)
+   + [development сборка](docs/avy.ru.md#dev)
+   + [production сборка](docs/avy.ru.md#prod)
+5. [search.avy.ru](docs/search.avy.ru.md)
+   + [Общие шаги](docs/search.avy.ru.md#general)
+   + [development сборка](docs/search.avy.ru.md#dev)
+   + [production сборка](docs/search.avy.ru.md#prod)
+6. [Установка https](#https-install)
 
 ## <a name="scheme"></a> Схема
 В корне репозитория есть Apache httpd, который запускает php  
@@ -48,51 +50,70 @@
     apache и certbot
             |
             |___ web-sites/avy.ru (конфиги для php и БД,  
-                 а также контент сайта)
+            |     а также контент сайта)
             |
             |___ web-sites/search.avy.ru (конфиги для php, БД,  
                  а также контент сайта)
 ````
 
-## <a name="general-installation"></a> Общая установка
-1. Как уже было сказано выше, сервер состоит из Docker композиций,  
-Поэтому первым делом вам нужно поставить терминальные утилиты  
-`docker` и `docker-compose`.  
-2. Далее вам нужно создать следующие директории:
+## <a name="preinstall"></a> Необходимые программы
+Для установки сервера вам понадобится только `docker` и  
+`docker-compose`. Инструкцию по установке вы можете найти  
+на официальном сайте. Если вы разрабатываете локально, то  
+можете просто скачать `docker desktop`. Помимо визуального  
+интерфейся он также включает в себя все необхидимое.
+
+## <a name="apache-installation"></a> Установка корневого Apache
+1. создайте следующие директории из корня проекта:
 ````
 certbot/conf/
 certbot/logs/
 certbot/www/
 ````
-3. Далее вам нужно переименовать все `.env.example` файлы в `.env`  
-(также не забудьте поменять все пароли в этих файлах).
-4. Выбрать `UID` и `GID` в `.env` файлах. Это параметры id  
+Это нужно, чтобы генерируемые certbot сертификаты были  
+доступны по unix правам для apache.
+2. Далее вам нужно переименовать `.env.example` файл в корне  
+на `.env`
+3. Выбрать `UID` и `GID` в `.env`. Это параметры id  
 пользователя и группы в unix системах. Рекомендуется просто  
 выбрать одинаковые значения во всех `.env` файлах, чтобы они сов- 
 падали с этими же параметрами на хост-машине. Это нужно, чтобы  
 файлы которые были сгенерированы внутри контейнера были  
 доступны без прав суперпользователя, а также могли открываться и  
 изменяться в разных контейнерах. 
-5. Далее нужно указать `ENV` переменные в `.env` файлах. Для  
+4. Далее нужно указать `ENV` переменные в `.env` файлах. Для  
 корневого `.env` это означает, что при `ENV=dev` сайты будут откры-  
-ваться только локально по адресам `avy.loc` и `search.avy.loc`  
+ваться локально по адресам `avy.loc` и `search.avy.loc`  
 (не забудьте добавить эти параметры в ваш `hosts` файл) и по  
 протоколу http. А при `ENV=prod` по `avy.ru` и `search.avy.ru` и    
 протокол только https.
 
-Далее будут рассмотрены более детальные принципы установки для  
-каждого сайта
+Более детальные принципы установки для  
+каждого сайта:
 
-1. [avy.ru][]
-   + [development сборка][]
-   + [production сборка][]
-2. [search.avy.ru][]
-   + [development сборка][]
-   + [production сборка][]
+1. [avy.ru](docs/avy.ru.md)
+   + [Общие шаги](docs/avy.ru.md#general)
+   + [development сборка](docs/avy.ru.md#dev)
+   + [production сборка](docs/avy.ru.md#prod)
+2. [search.avy.ru](docs/search.avy.ru.md)
+   + [Общие шаги](docs/search.avy.ru.md#general)
+   + [development сборка](docs/search.avy.ru.md#dev)
+   + [production сборка](docs/search.avy.ru.md#prod)
 
-[avy.ru]: docs/avy.ru.md
-[development сборка]: docs/avy.ru.md#dev
-[production сборка]: docs/avy.ru.md#prod
-[search.avy.ru]: docs/search.avy.ru.md
-[development сборка]: docs/search.avy.ru.md#dev
-[production сборка]: docs/search.avy.ru.md#prod
+## <a name="https-install"></a> Установка HTTPS
+Установка скрипта работает засчет certbot от letsencrypt.  
+Сертификаты выдаются бесплатно, срок действия - 3 месяца.  
+В корневой docker-compose уже установлены скрипты для 
+автопродления. Если вы проводили реконфигурацию файлов,  
+то, возможно, они не будут работать, так что следите за ними.  
+  
+
+1. Чтобы установить https на `avy.ru` или `search.avy.ru`  
+Остановите докер контейнер с apache-httpd (корневой  
+`docker-compose`). 
+2. Обязательно установите `ENV` переменную  
+в корневом `.env` файле в `prod`. 
+3. Затем запустите `create-ssl.sh` скрипт. Если вы устанавливаете сертификат на  
+unix системах, нужно будет прописать команду `sudo chmod +x  
+create-ssl.sh`, чтобы сделать его исполняемым. 
+4. Далее просто следуйте инструкциям из скрипта.
