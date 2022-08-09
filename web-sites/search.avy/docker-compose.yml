@@ -33,9 +33,10 @@ services:
       - xpack.security.enabled=true
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.max_initial_line_length=10kb
       - action.destructive_requires_name=false
     volumes:
-#      - ./elasticsearch/data/:/usr/share/elasticsearch/data
+      - ./elasticsearch/data/:/usr/share/elasticsearch/data
       - ./elasticsearch/log/:/usr/share/elasticsearch/logs
     ulimits:
       memlock:
