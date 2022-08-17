@@ -15,16 +15,27 @@ services:
     networks:
       - 'LAMP'
 
+  setup_elk:
+    build:
+      context: ELK/setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - ./ELK/setup:/state:Z
+    environment:
+      ELASTICSEARCH_HOST: avy-search-elasticsearch
+      ELASTIC_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_PASSWORD}
+    networks:
+      - LAMP
+    depends_on:
+      - elasticsearch
+
   elasticsearch:
     container_name: avy-search-elasticsearch
     image: elasticsearch:${ELASTIC_VERSION}
     init: true
-#    command: >
-#      bash -c '
-#        echo "Setting ${KIBANA_USERNAME} password";
-#        until curl -X POST -u elastic:${ELASTICSEARCH_PASSWORD} -H "Content-Type: application/json" http://localhost:9200/_security/user/${KIBANA_USERNAME}/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}"; do sleep 10; done;
-#        echo "All done!"
-#      '
     environment:
       - node.name=catalog_es1
       - cluster.name=es-docker-cluster
@@ -36,8 +47,8 @@ services:
       - http.max_initial_line_length=10kb
       - action.destructive_requires_name=false
     volumes:
-      - ./elasticsearch/data/:/usr/share/elasticsearch/data
-      - ./elasticsearch/log/:/usr/share/elasticsearch/logs
+      - ./ELK/elasticsearch/data/:/usr/share/elasticsearch/data
+      - ./ELK/elasticsearch/log/:/usr/share/elasticsearch/logs
     ulimits:
       memlock:
         soft: -1
@@ -47,19 +58,19 @@ services:
     networks:
       - 'LAMP'
 
-  # kibana:
-  #   container_name: avy-search-kibana
-  #   image: kibana:${ELASTIC_VERSION}
-  #   depends_on:
-  #     - elasticsearch
-  #   environment:
-  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-  #     - ELASTICSEARCH_USERNAME=${KIBANA_USERNAME}
-  #     - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-  #   networks:
-  #     - 'LAMP'
-  #   ports:
-  #     - "5601:5601"
+  kibana:
+    container_name: avy-search-kibana
+    image: kibana:${ELASTIC_VERSION}
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://avy-search-elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+    networks:
+      - 'LAMP'
+    ports:
+      - "5601:5601"
 
   mariadb:
     container_name: avy-search-mariadb
