@@ -40,9 +40,7 @@ RUN addgroup -g ${GID} --system search-avy-group
 RUN adduser -G search-avy-group --system -D -s /bin/sh -u ${UID} search-avy
 
 # Add custom php.ini config
-ADD php.ini /usr/local/etc/php/php.ini
-
-RUN sed -i "s/user = www-data/user = search-avy/g" /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i "s/group = www-data/group = search-avy-group/g" /usr/local/etc/php-fpm.d/www.conf
+ADD prod_php.ini /usr/local/etc/php/php.ini
+ADD www.conf /usr/local/etc/php-fpm.d/www.conf
 
 EXPOSE 9000

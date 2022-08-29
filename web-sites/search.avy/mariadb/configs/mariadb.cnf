@@ -33,6 +33,8 @@ max_allowed_packet = 128M
 innodb_buffer_pool_size=128M
 wait_timeout=600
 log_error=/var/log/mysql/mariadb.err
+slow_query_log=1
+slow_query_log_file=/var/log/mysql/mariadb_slow.log
 
 !includedir /etc/mysql/mariadb.conf.d/
 !includedir /etc/mysql/conf.d/
