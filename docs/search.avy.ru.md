@@ -20,11 +20,15 @@
 ## <a name="dev"></a> Development сборка
 1. Для установки dev билда поставьте значение `ENV=dev` в `.env` 
 файле
-2. Запустите команду `docker-compose build` из папки `web-sites/avy`
+2. Запустите команду `docker-compose build` из папки `web-sites/search.avy`
 3. Далее `docker-compose up -d` чтобы запустить сборку 
 
 ## <a name="prod"></a> Production сборка
 1. Для установки dev билда поставьте значение `ENV=prod` в `.env`
    файле
-2. Запустите команду `docker-compose build` из папки `web-sites/avy`
+2. Запустите команду `docker-compose build` из папки `web-sites/search.avy`
 3. Далее `docker-compose up -d` чтобы запустить сборку 
+
+## <a name="prod-deploy"></a> Production deployment
+В `prod` сборке установлен и включен Opcache. Дополнительных конфигураций он не требует и кэш создается автоматически при первом запросе к PHP-FPM.
+После обновления php кода вам обязательно нужно перезапустить контейнер с PHP-FPM, чтобы сбросить Opcache, так как иначе будет запускаться только старый закешированный код. Перезапустить контейнер можно командой `docker-compose restart php8.1`, находясь в папке `web-sites/search.avy`.
