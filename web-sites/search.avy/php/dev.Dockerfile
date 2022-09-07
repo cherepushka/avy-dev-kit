@@ -50,4 +50,5 @@ ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 ADD dev_php.ini /usr/local/etc/php/php.ini
 ADD www.conf /usr/local/etc/php-fpm.d/www.conf
 
+USER search-avy
 EXPOSE 9000

@@ -43,4 +43,5 @@ RUN adduser -G search-avy-group --system -D -s /bin/sh -u ${UID} search-avy
 ADD prod_php.ini /usr/local/etc/php/php.ini
 ADD www.conf /usr/local/etc/php-fpm.d/www.conf
 
+USER search-avy
 EXPOSE 9000
