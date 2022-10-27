@@ -15,22 +15,22 @@ services:
     networks:
       - 'LAMP'
 
-  mysql:
-    container_name: avy-mysql
+  mariadb:
+    container_name: avy-mariadb
     build:
-      context: ./mysql
+      context: ./mariadb
     user: ${UID:-1000}:${GID:-1000}
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_ROOT_HOST: '%'
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_USER_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_ROOT_HOST: '%'
     ports:
       - '3308:3306'
     volumes:
-      - './mysql/data:/var/lib/mysql'
-      - './mysql/logs:/var/log/mysql'
+      - './mariadb/data:/var/lib/mysql'
+      - './mariadb/logs:/var/log/mysql'
     networks:
       - 'LAMP'
 
