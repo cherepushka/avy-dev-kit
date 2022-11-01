@@ -16,6 +16,7 @@ services:
         - GID=${GID:-1000}
     volumes:
       - ./htdocs:/var/www/html
+      - ./avy-products:/var/www/content
     networks:
       - 'LAMP'
 
