@@ -1,7 +1,8 @@
 version: '3.8'
 
 volumes:
-    avy_mariadb_data: {}
+    avy_mariadb_data:
+      driver: local
 
 services:
 
@@ -22,7 +23,6 @@ services:
     container_name: avy-mariadb
     build:
       context: ./mariadb
-    user: ${UID:-1000}:${GID:-1000}
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USER: ${MARIADB_USER}
